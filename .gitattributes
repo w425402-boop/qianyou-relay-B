@@ -1,0 +1,7 @@
+# 全员统一 LF —— 契约第 5 条要求，也让 tests/contract.js 的 appendOnly 删除行检查不被 CRLF 干扰
+* text=auto eol=lf
+
+# 二进制/无文本意义的文件不做换行转换
+*.png binary
+*.jpg binary
+*.ico binary

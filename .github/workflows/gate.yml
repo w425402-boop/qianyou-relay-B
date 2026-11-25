@@ -1,0 +1,196 @@
+# 牵友接力面试 v1.1 · GitHub Actions 硬门（gate.yml）
+#
+# 【落地位置】真仓库里本文件必须位于 /.github/workflows/gate.yml
+#             （seam/ 是出题方的暂存区，播种时 .github/ 整个上移到仓库根）
+#
+# 作用：PR 打到 main 时强制跑两道闸门
+#   1. tests/contract.js —— 文件越界 / 契约完整性 / 存储与弹窗（三类硬检查）
+#   2. tests/check.js    —— M1–M8 功能断言（桩未实现自动降级 [SKIP]，不误伤）
+# 任一失败 → 汇总判定步骤 exit 1 → job 红 → branch protection 的
+# required status check（job 名：契约闸门 + 功能闸门）挡住 Merge。
+#
+# 座位号从分支名推断：seat/a3-m3 → A3，resc/b8-m8 → B8。
+
+name: 接力闸门
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# 同一分支连推多次只保留最后一次，省 runner 也省噪音
+concurrency:
+  group: gate-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read        # 读代码、算 diff
+  pull-requests: write  # 往 PR 贴闸门结果评论
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  gate:
+    name: 契约闸门 + 功能闸门
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # fetch-depth: 0 —— 契约闸门要拿 diff 二进制，浅克隆算不出相对基准的变更
+      - name: 取代码（完整历史）
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 装 Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 分支名 seat/a3-m3 → A3；不符合规范就留空，契约闸门会按「座位号未识别」处理
+      - name: 从分支名推断座位号 RELAY_SEAT
+        id: seat
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          BRANCH="${HEAD_REF:-$(git rev-parse --abbrev-ref HEAD)}"
+          SEAT="$(printf '%s' "$BRANCH" \
+            | sed -nE 's#^(seat|resc)/([a-zA-Z])([0-9]+).*#\2\3#p' \
+            | tr '[:lower:]' '[:upper:]')"
+          if [ -z "$SEAT" ]; then
+            echo "::warning::分支名 '$BRANCH' 不符合 seat/<组><号>-<模块> 规范，契约闸门会按未识别座位号处理"
+          fi
+          echo "RELAY_SEAT=$SEAT" >> "$GITHUB_ENV"
+          echo "seat=$SEAT" >> "$GITHUB_OUTPUT"
+          echo "座位号：${SEAT:-未识别}（分支：$BRANCH）"
+
+      # continue-on-error + 最后统一判定：两道闸门都要跑完，结果表才不会缺一半
+      - name: 契约闸门（文件越界 / 契约完整性 / 存储与弹窗）
+        id: contract
+        continue-on-error: true
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set +e
+          node tests/contract.js "origin/${BASE_REF}" "${RELAY_SEAT:-}" 2>&1 | tee contract.log
+          exit "${PIPESTATUS[0]}"
+
+      - name: 功能闸门（M1–M8 断言，桩未实现自动 SKIP）
+        id: functional
+        continue-on-error: true
+        run: |
+          set +e
+          node tests/check.js 2>&1 | tee check.log
+          exit "${PIPESTATUS[0]}"
+
+      # 结果表进 Step Summary：老师点开 Actions 就能看，不用翻日志
+      - name: 闸门结果写进 Step Summary
+        if: always()
+        env:
+          SEAT: ${{ steps.seat.outputs.seat }}
+          CONTRACT_OUTCOME: ${{ steps.contract.outcome }}
+          FUNCTIONAL_OUTCOME: ${{ steps.functional.outcome }}
+        run: |
+          set -euo pipefail
+          mark() { if [ "$1" = "success" ]; then printf '✅ 通过'; else printf '❌ 失败'; fi; }
+          {
+            echo '## 接力闸门结果'
+            echo ''
+            echo '| 检查项 | 结果 |'
+            echo '| :--- | :--- |'
+            echo "| 座位号 | \`${SEAT:-未识别}\` |"
+            echo "| 契约闸门 \`node tests/contract.js\` | $(mark "${CONTRACT_OUTCOME}") |"
+            echo "| 功能闸门 \`node tests/check.js\` | $(mark "${FUNCTIONAL_OUTCOME}") |"
+            echo ''
+            echo '<details><summary>契约闸门输出（末 40 行）</summary>'
+            echo ''
+            echo '```text'
+            tail -n 40 contract.log 2>/dev/null || echo '(无输出)'
+            echo '```'
+            echo ''
+            echo '</details>'
+            echo ''
+            echo '<details><summary>功能闸门输出（末 40 行）</summary>'
+            echo ''
+            echo '```text'
+            tail -n 40 check.log 2>/dev/null || echo '(无输出)'
+            echo '```'
+            echo ''
+            echo '</details>'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # 同一份表格贴到 PR 评论，面试者不用点进 Actions
+      - name: 闸门结果贴到 PR 评论
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SEAT: ${{ steps.seat.outputs.seat }}
+          CONTRACT_OUTCOME: ${{ steps.contract.outcome }}
+          FUNCTIONAL_OUTCOME: ${{ steps.functional.outcome }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          mark() { if [ "$1" = "success" ]; then printf '✅ 通过'; else printf '❌ 失败'; fi; }
+          {
+            echo "## 接力闸门 · 座位号 \`${SEAT:-未识别}\`"
+            echo ''
+            echo "基准：\`origin/${BASE}\` · 提交：\`${HEAD_SHA:0:8}\`"
+            echo ''
+            echo '| 检查项 | 结果 |'
+            echo '| :--- | :--- |'
+            echo "| 契约闸门 \`tests/contract.js\` | $(mark "${CONTRACT_OUTCOME}") |"
+            echo "| 功能闸门 \`tests/check.js\` | $(mark "${FUNCTIONAL_OUTCOME}") |"
+            echo ''
+            echo '> 未通过时看下面两条折叠块里的 \`[FAIL]\` 行；'
+            echo '> 契约闸门会点名越界改的文件归哪一棒、本棒模块哪几个函数还是桩。'
+            echo ''
+            echo '<details><summary>契约闸门输出（末 40 行）</summary>'
+            echo ''
+            echo '```text'
+            tail -n 40 contract.log 2>/dev/null || echo '(无输出)'
+            echo '```'
+            echo ''
+            echo '</details>'
+            echo ''
+            echo '<details><summary>功能闸门输出（末 40 行）</summary>'
+            echo ''
+            echo '```text'
+            tail -n 40 check.log 2>/dev/null || echo '(无输出)'
+            echo '```'
+            echo ''
+            echo '</details>'
+          } > gate-comment.md
+
+          if command -v gh >/dev/null 2>&1; then
+            gh pr comment "$PR_NUMBER" --body-file gate-comment.md
+          else
+            echo "::notice::gh CLI 不可用，闸门结果只写进 Step Summary"
+          fi
+
+      # 唯一的红绿判定点：两条闸门任一失败，job 就红
+      - name: 汇总判定（任一闸门失败即红）
+        if: always()
+        env:
+          CONTRACT_OUTCOME: ${{ steps.contract.outcome }}
+          FUNCTIONAL_OUTCOME: ${{ steps.functional.outcome }}
+        run: |
+          set -uo pipefail
+          FAILED=0
+          if [ "${CONTRACT_OUTCOME}" != "success" ]; then
+            echo "::error::契约闸门未通过（tests/contract.js）"
+            FAILED=1
+          fi
+          if [ "${FUNCTIONAL_OUTCOME}" != "success" ]; then
+            echo "::error::功能闸门未通过（tests/check.js）"
+            FAILED=1
+          fi
+          if [ "$FAILED" -ne 0 ]; then
+            echo "接力闸门：FAIL —— Merge 被拦下"
+            exit 1
+          fi
+          echo "接力闸门：PASS —— 可以 Merge"

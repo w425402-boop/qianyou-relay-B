@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>牵友 · 接力面试 v1.1（定桩骨架）</title>
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+<!-- 顶部栏：M1 可调整结构，但 #app 挂载点与 4 个 Tab 的 id 必须保留 -->
+<header class="qy-topbar">
+  <span class="qy-brand">牵友</span>
+  <span class="qy-seat-badge" id="qy-seat-badge">定桩骨架</span>
+  <button type="button" class="qy-seam-btn" id="qy-seam-btn" title="查看契约函数实现状态">桩状态</button>
+</header>
+
+<!-- 桩状态面板：点顶部「桩状态」按钮展开，现场老师用来一眼看进度 -->
+<section class="qy-seam-panel" id="qy-seam-panel" hidden>
+  <div class="qy-seam-panel-head">
+    <strong>契约函数实现状态</strong>
+    <span id="qy-seam-summary">—</span>
+  </div>
+  <ul class="qy-seam-list" id="qy-seam-list"></ul>
+</section>
+
+<!-- 主工作区：#app 是全项目唯一渲染挂载点，任何模块都往这里渲染 -->
+<main id="app" class="qy-main">
+  <p class="qy-placeholder">正在等待路由接管…</p>
+</main>
+
+<!-- 全局 Toast：契约第 5 条禁止 alert/confirm，所有提示走这里 -->
+<div class="qy-toast" id="qy-toast" role="status" aria-live="polite"></div>
+
+<!-- 底部固定 4 项 Tab：id 固定，模块不得改动 -->
+<nav class="qy-tabbar" aria-label="主导航">
+  <a class="qy-tab" id="tab-discover" href="#/discover">发现</a>
+  <a class="qy-tab" id="tab-publish" href="#/publish">发布</a>
+  <a class="qy-tab" id="tab-chat" href="#/chat">消息</a>
+  <a class="qy-tab" id="tab-mine" href="#/mine">我的</a>
+</nav>
+
+<!-- 加载顺序即依赖顺序，不得调整：先定桩工具箱，再数据层，再业务 -->
+<script src="./js/seam.js"></script>
+<script src="./js/data.js"></script>
+<script src="./js/store.js"></script>
+<script src="./js/router.js"></script>
+
+<script src="./js/modules/discover.js"></script>
+<script src="./js/modules/recommend.js"></script>
+<script src="./js/modules/detail.js"></script>
+<script src="./js/modules/publish.js"></script>
+<script src="./js/modules/chat.js"></script>
+<script src="./js/modules/mine.js"></script>
+<script src="./js/modules/admin.js"></script>
+<script src="./js/modules/integration.js"></script>
+
+<!-- 启动引导：桩状态下也能跑，桩被调用时把错误显示到页面而不是白屏 -->
+<script src="./js/boot.js"></script>
+
+</body>
+</html>

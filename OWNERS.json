@@ -1,0 +1,274 @@
+{
+  "$schema": "qianyou-relay/owners-v1",
+  "version": "1.1",
+  "description": "文件归属表 —— tests/contract.js 的唯一数据源。owns = 只允许本棒修改；appendOnly = 允许追加但不许改动已有内容；frozen = 任何棒都不许改（改契约须走 PR 并面试官审批）",
+  "frozen": [
+    "CONTRACT.md",
+    "TEAMS.md",
+    "OWNERS.json",
+    "js/seam.js",
+    "js/boot.js",
+    "tests/contract.js",
+    "tests/helpers.js",
+    ".github/workflows/gate.yml"
+  ],
+  "globalAppendOnly": [
+    "tests/check.js"
+  ],
+  "groups": {
+    "A": {
+      "repo": "qianyou-relay-A",
+      "size": 7,
+      "batons": {
+        "A1": {
+          "baton": 1,
+          "module": "M1",
+          "moduleName": "工程基座与数据层",
+          "branch": "seat/a1-m1",
+          "rescue": "resc/a1-m1",
+          "person": "A组1号",
+          "owns": [
+            "index.html",
+            "css/style.css",
+            "js/store.js",
+            "js/data.js",
+            "js/router.js"
+          ],
+          "appendOnly": [
+            "tests/check.js"
+          ],
+          "frozenOnDelivery": [
+            "CONTRACT.md"
+          ]
+        },
+        "A2": {
+          "baton": 2,
+          "module": "M2",
+          "moduleName": "发现页",
+          "branch": "seat/a2-m2",
+          "rescue": "resc/a2-m2",
+          "person": "A组2号",
+          "owns": [
+            "js/modules/discover.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "A3": {
+          "baton": 3,
+          "module": "M3",
+          "moduleName": "推荐与附近",
+          "branch": "seat/a3-m3",
+          "rescue": "resc/a3-m3",
+          "person": "A组3号",
+          "owns": [
+            "js/modules/recommend.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "A4": {
+          "baton": 4,
+          "module": "M4",
+          "moduleName": "活动详情与报名",
+          "branch": "seat/a4-m4",
+          "rescue": "resc/a4-m4",
+          "person": "A组4号",
+          "owns": [
+            "js/modules/detail.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "A5": {
+          "baton": 5,
+          "module": "M5",
+          "moduleName": "发布活动",
+          "branch": "seat/a5-m5",
+          "rescue": "resc/a5-m5",
+          "person": "A组5号",
+          "owns": [
+            "js/modules/publish.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "A6": {
+          "baton": 6,
+          "module": "M6",
+          "moduleName": "消息与聊天",
+          "branch": "seat/a6-m6",
+          "rescue": "resc/a6-m6",
+          "person": "A组6号",
+          "owns": [
+            "js/modules/chat.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "A7": {
+          "baton": 7,
+          "module": "M7+M8",
+          "moduleName": "我的与个人资料 + 管理状态切换联调",
+          "branch": "seat/a7-m7m8",
+          "rescue": "resc/a7-m7m8",
+          "person": "A组7号",
+          "owns": [
+            "js/modules/mine.js",
+            "js/modules/admin.js",
+            "README.md",
+            "js/modules/integration.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        }
+      }
+    },
+    "B": {
+      "repo": "qianyou-relay-B",
+      "size": 8,
+      "batons": {
+        "B1": {
+          "baton": 1,
+          "module": "M1",
+          "moduleName": "工程基座与数据层",
+          "branch": "seat/b1-m1",
+          "rescue": "resc/b1-m1",
+          "person": "B组1号",
+          "owns": [
+            "index.html",
+            "css/style.css",
+            "js/store.js",
+            "js/data.js",
+            "js/router.js"
+          ],
+          "appendOnly": [
+            "tests/check.js"
+          ],
+          "frozenOnDelivery": [
+            "CONTRACT.md"
+          ]
+        },
+        "B2": {
+          "baton": 2,
+          "module": "M2",
+          "moduleName": "发现页",
+          "branch": "seat/b2-m2",
+          "rescue": "resc/b2-m2",
+          "person": "B组2号",
+          "owns": [
+            "js/modules/discover.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "B3": {
+          "baton": 3,
+          "module": "M3",
+          "moduleName": "推荐与附近",
+          "branch": "seat/b3-m3",
+          "rescue": "resc/b3-m3",
+          "person": "B组3号",
+          "owns": [
+            "js/modules/recommend.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "B4": {
+          "baton": 4,
+          "module": "M4",
+          "moduleName": "活动详情与报名",
+          "branch": "seat/b4-m4",
+          "rescue": "resc/b4-m4",
+          "person": "B组4号",
+          "owns": [
+            "js/modules/detail.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "B5": {
+          "baton": 5,
+          "module": "M5",
+          "moduleName": "发布活动",
+          "branch": "seat/b5-m5",
+          "rescue": "resc/b5-m5",
+          "person": "B组5号",
+          "owns": [
+            "js/modules/publish.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "B6": {
+          "baton": 6,
+          "module": "M6",
+          "moduleName": "消息与聊天",
+          "branch": "seat/b6-m6",
+          "rescue": "resc/b6-m6",
+          "person": "B组6号",
+          "owns": [
+            "js/modules/chat.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "B7": {
+          "baton": 7,
+          "module": "M7",
+          "moduleName": "我的与个人资料",
+          "branch": "seat/b7-m7",
+          "rescue": "resc/b7-m7",
+          "person": "B组7号",
+          "owns": [
+            "js/modules/mine.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        },
+        "B8": {
+          "baton": 8,
+          "module": "M8",
+          "moduleName": "管理与收尾联调",
+          "branch": "seat/b8-m8",
+          "rescue": "resc/b8-m8",
+          "person": "B组8号",
+          "owns": [
+            "js/modules/admin.js",
+            "README.md",
+            "js/modules/integration.js"
+          ],
+          "appendOnly": [
+            "css/style.css",
+            "tests/check.js"
+          ]
+        }
+      }
+    }
+  }
+}
