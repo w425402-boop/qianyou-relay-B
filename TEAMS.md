@@ -11,7 +11,11 @@
 
 ---
 
-## A 组（7 人）· 仓库 `qianyou-relay-A`
+## A 组（7 人）· 仓库 [qianyou-relay-A](https://github.com/w425402-boop/qianyou-relay-A)
+
+```
+https://github.com/w425402-boop/qianyou-relay-A.git
+```
 
 | 座位 | GitHub 账号 | 个人分支 | 模块 | 模块名 | 上一个评审人 | 下一棒接手人 |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -27,7 +31,11 @@
 
 ---
 
-## B 组（8 人）· 仓库 `qianyou-relay-B`
+## B 组（8 人）· 仓库 [qianyou-relay-B](https://github.com/w425402-boop/qianyou-relay-B)
+
+```
+https://github.com/w425402-boop/qianyou-relay-B.git
+```
 
 | 座位 | GitHub 账号 | 个人分支 | 模块 | 模块名 | 上一个评审人 | 下一棒接手人 |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
