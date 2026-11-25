@@ -1,0 +1,36 @@
+# 牵友接力面试 v1.1 · 午休代码冻结硬门（freeze.yml）
+#
+# 作用：北京时间 12:20–13:30 午休冻结期间，PR 状态检查自动判红，物理阻断合并。
+
+name: 午休冻结
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: freeze-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  freeze:
+    name: 午休代码冻结检查
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 午休代码冻结 12:20–13:30（北京时间）
+        run: |
+          set -euo pipefail
+          NOW_HM="$(TZ=Asia/Shanghai date +%H%M)"
+          NOW_STR="$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S CST')"
+          echo "当前时间：${NOW_STR}"
+          if [ "$((10#${NOW_HM}))" -ge 1220 ] && [ "$((10#${NOW_HM}))" -lt 1330 ]; then
+            echo "::error::12:20–13:30 为午休代码冻结时段，当前 PR 禁止合并"
+            exit 1
+          fi
+          echo "非冻结时段，放行"

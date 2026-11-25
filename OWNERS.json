@@ -10,7 +10,9 @@
     "js/boot.js",
     "tests/contract.js",
     "tests/helpers.js",
-    ".github/workflows/gate.yml"
+    ".github/CODEOWNERS",
+    ".github/workflows/gate.yml",
+    ".github/workflows/freeze.yml"
   ],
   "globalAppendOnly": [
     "tests/check.js"

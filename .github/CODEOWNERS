@@ -1,0 +1,31 @@
+# 牵友接力面试 v1.1 · CODEOWNERS（冻结文件）
+#
+# 规则：谁的文件由「上一棒」审批，面试官主账号 @w425402-boop 全程兜底。
+# 考前一天（T-1）填入 TEAMS.md 候选人 GitHub 账号时，同步把对应上一棒的 @账号 追加在对应行末尾即可：
+#   例：/js/modules/discover.js    @candidate-a1 @w425402-boop
+
+# ── 冻结核心文件（仅面试官可批） ──
+/CONTRACT.md                  @w425402-boop
+/TEAMS.md                     @w425402-boop
+/OWNERS.json                  @w425402-boop
+/js/seam.js                   @w425402-boop
+/js/boot.js                   @w425402-boop
+/tests/contract.js            @w425402-boop
+/tests/helpers.js             @w425402-boop
+/.github/                     @w425402-boop
+
+# ── M1 基座（面试官直审） ──
+/index.html                   @w425402-boop
+/js/data.js                   @w425402-boop
+/js/store.js                  @w425402-boop
+/js/router.js                 @w425402-boop
+
+# ── M2–M8 业务模块（T-1 天可在每行追加上一棒 @账号） ──
+/js/modules/discover.js       @w425402-boop
+/js/modules/recommend.js      @w425402-boop
+/js/modules/detail.js         @w425402-boop
+/js/modules/publish.js        @w425402-boop
+/js/modules/chat.js           @w425402-boop
+/js/modules/mine.js           @w425402-boop
+/js/modules/admin.js          @w425402-boop
+/js/modules/integration.js    @w425402-boop
