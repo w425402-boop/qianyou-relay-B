@@ -11,6 +11,7 @@
     "tests/contract.js",
     "tests/helpers.js",
     ".github/CODEOWNERS",
+    ".github/ISSUE_TEMPLATE/upstream-bug.md",
     ".github/workflows/gate.yml",
     ".github/workflows/freeze.yml"
   ],
